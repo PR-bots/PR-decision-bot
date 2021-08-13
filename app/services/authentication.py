@@ -1,19 +1,16 @@
 # this is the authentication service
-from gettext import install
-from os import access
-import sys, time, requests
+import sys, time
 sys.path.append("././")
 
-import yaml, jwt, json
+import yaml, jwt
 from app.models.jwt_query import JWTQuery
 from app.models.installation import Installation
-from app.services.queries import query_installations, query_access_token
-from typing import List, Dict
+from app.services.queries import query_access_token
 
 ALGORITHM = "RS256"
 
-def getToken() -> str:
-    result: str
+def getToken(installation: Installation) -> str:
+    result: str = None
     try: 
         with open(".env.yaml") as f:
             envConfig = yaml.load(f, Loader=yaml.FullLoader)
@@ -34,7 +31,8 @@ def getToken() -> str:
         encoded_jwt = jwt.encode(payload, private_pem, algorithm=ALGORITHM)
         
         # query access token of the installation
-        url = "https://api.github.com/app/installations/{installation_id}/access_tokens".format(installation_id=installation_id)
+        headers = {'Authorization': 'bearer ' + encoded_jwt, "Accept": "application/vnd.github.v3+json"}
+        url = "https://api.github.com/app/installations/{installation_id}/access_tokens".format(installation_id=installation.id)
         jwtQuery = JWTQuery(headers=headers, url=url)
         result = query_access_token(jwtQuery)
         
@@ -43,6 +41,3 @@ def getToken() -> str:
 
     finally:
         return result
-
-if __name__ == "__main__":
-    auth()
