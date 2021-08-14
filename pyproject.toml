@@ -12,6 +12,9 @@ PyYAML = "^5.4.1"
 PyJWT = "^2.1.0"
 requests = "^2.26.0"
 cryptography = "^3.4.7"
+SQLAlchemy = "^1.4.22"
+alembic = "^1.6.5"
+asyncpg = "^0.24.0"
 
 [tool.poetry.dev-dependencies]
 
