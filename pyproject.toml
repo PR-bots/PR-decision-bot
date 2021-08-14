@@ -15,6 +15,7 @@ cryptography = "^3.4.7"
 SQLAlchemy = "^1.4.22"
 alembic = "^1.6.5"
 asyncpg = "^0.24.0"
+PyMySQL = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 
