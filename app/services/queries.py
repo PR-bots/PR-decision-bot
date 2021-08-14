@@ -1,7 +1,6 @@
 # query github using apis
-from gettext import install
-import sys, requests
-sys.path.append("././")
+import sys, requests, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 import json5 as json
 

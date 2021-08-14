@@ -1,6 +1,5 @@
-from app.models.user import User
-import sys
-sys.path.append('././')
+import sys, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 from app.models.pull_request import PullRequest
 from app.models.user import User
 from typing import Optional

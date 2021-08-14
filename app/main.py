@@ -1,5 +1,5 @@
-import re, sys
-sys.path.append("./")
+import re, sys, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import json5 as json
 from wsgiref.simple_server import make_server
 from app.services.comments import return_pr_decision

@@ -1,6 +1,6 @@
 # handle triggers
-import sys
-sys.path.append("././")
+import sys, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 from app.models.trigger import *
 from app.models.repository import Repository

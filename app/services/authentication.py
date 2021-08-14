@@ -1,21 +1,21 @@
 # this is the authentication service
-import sys, time
-sys.path.append("././")
+import sys, time, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 import yaml, jwt
 from app.models.jwt_query import JWTQuery
 from app.models.installation import Installation
 from app.services.queries import query_access_token
+from app.utils.config_loader import ConfigLoader
 
 ALGORITHM = "RS256"
 
 def getToken(installation: Installation) -> str:
     result: str = None
     try: 
-        with open(".env.yaml") as f:
-            envConfig = yaml.load(f, Loader=yaml.FullLoader)
-            if "APP_ID" not in envConfig or "PRIVATE_KEY_PATH" not in envConfig:
-                raise Exception("error with configuration .env.yaml")
+        envConfig = ConfigLoader().load_env()
+        if "APP_ID" not in envConfig or "PRIVATE_KEY_PATH" not in envConfig:
+            raise Exception("error with configuration .env.yaml")
         
         appId: int = envConfig['APP_ID']
         private_key_path: str = envConfig['PRIVATE_KEY_PATH']

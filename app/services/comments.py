@@ -1,7 +1,6 @@
 # the services related to labels
-import sys, requests
-sys.path.append("././")
-import json
+import sys, requests, pathlib, json
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 from app.services.authentication import getToken
 from app.models.pr_comment import PRComment
 from app.models.trigger import *
