@@ -14,8 +14,8 @@ requests = "^2.26.0"
 cryptography = "^3.4.7"
 SQLAlchemy = "^1.4.22"
 alembic = "^1.6.5"
-asyncpg = "^0.24.0"
-PyMySQL = "^1.0.2"
+aiomysql = "^0.0.21"
+pytest-asyncio = "^0.15.1"
 
 [tool.poetry.dev-dependencies]
 
