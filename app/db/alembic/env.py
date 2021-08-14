@@ -28,7 +28,9 @@ fileConfig(config.config_file_name)
 from app.db.tables import sqlalchemy_orm
 target_metadata = sqlalchemy_orm.Base.metadata
 
-config.set_main_option("sqlalchemy.url", ConfigLoader().load_env()["MYSQL_CONNECTION"]) # we need to add this in main option, because the configuration of sqlalchemy.url is in .env.yaml, not in alembic.ini
+env = ConfigLoader().load_env()
+connection_url = "mysql+mysqldb://{user}:{password}@{host}:{port}/{db}".format(user=env["MYSQL"]["USER"], password=env["MYSQL"]["PASSWORD"], host=env["MYSQL"]["HOST"], port=env["MYSQL"]["PORT"], db=env["MYSQL"]["DB"])
+config.set_main_option("sqlalchemy.url", connection_url) # we need to add this in main option, because the configuration of sqlalchemy.url is in .env.yaml, not in alembic.ini
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
