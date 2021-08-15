@@ -16,6 +16,7 @@ SQLAlchemy = "^1.4.22"
 alembic = "^1.6.5"
 aiomysql = "^0.0.21"
 pytest-asyncio = "^0.15.1"
+APScheduler = "^3.7.0"
 
 [tool.poetry.dev-dependencies]
 
