@@ -9,6 +9,5 @@ from app.models.repository import Repository
 
 @pytest.mark.asyncio
 async def test_insert_pull_requests() -> None:
-
     prOp = PullRequestOperator()
-    await prOp.insert_pull_request(PullRequest(owner=User("test2"), repo=Repository("test2"), number=1, state="test2", locked=False, created_at='2020-01-01 00:00:00', updated_at='2020-01-01 00:00:00'))
+    await prOp.insert_pull_request(PullRequest(owner=User("zxh2"), repo=Repository("test"), number=1, state="open", locked=1, created_at='2020-01-01 00:00:00'))

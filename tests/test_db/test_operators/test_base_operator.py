@@ -2,7 +2,7 @@ import sys, pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
 from app.db.operators.base_operator import BaseOperator
-import pytest, aiomysql
+import pytest
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 @pytest.mark.asyncio
