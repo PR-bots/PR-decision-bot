@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, VARCHAR, TIMESTAMP, Boolean, Text, Index
+from sqlalchemy import Column, Integer, VARCHAR, TIMESTAMP, Text, Index, DefaultClause
 
 Base = declarative_base()
 
@@ -11,10 +11,10 @@ class PullRequest(Base):
     installation_id = Column(Integer, nullable=False)
     number = Column(Integer, nullable=False)
     state = Column(VARCHAR(255), nullable=False, index=True)
-    locked = Column(Boolean, nullable=True, index=True)
+    locked = Column(Integer, nullable=True, index=True)
     created_at = Column(TIMESTAMP, nullable=False)
-    last_comment_at = Column(TIMESTAMP, nullable=True) # store the time for the last comment
-    comment_or_not = Column(Boolean, nullable=False, default=0)
+    last_comment_at = Column(TIMESTAMP, nullable=True)
+    comment_or_not = Column(Integer, nullable=True)
 Index("owner_repo_num", PullRequest.owner_login, PullRequest.repo_name, PullRequest.number, unique=True)
 
 class Comment(Base):
