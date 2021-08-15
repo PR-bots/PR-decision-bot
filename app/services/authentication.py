@@ -2,7 +2,7 @@
 import sys, time, pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
-import yaml, jwt
+import jwt
 from app.models.jwt_query import JWTQuery
 from app.models.installation import Installation
 from app.services.queries import query_access_token
@@ -14,11 +14,11 @@ def getToken(installation: Installation) -> str:
     result: str = None
     try: 
         envConfig = ConfigLoader().load_env()
-        if "APP_ID" not in envConfig or "PRIVATE_KEY_PATH" not in envConfig:
+        if "APP" not in envConfig or "APP_ID" not in envConfig['APP'] or "PRIVATE_KEY_PATH" not in envConfig['APP']:
             raise Exception("error with configuration .env.yaml")
         
-        appId: int = envConfig['APP_ID']
-        private_key_path: str = envConfig['PRIVATE_KEY_PATH']
+        appId: int = envConfig['APP']['APP_ID']
+        private_key_path: str = envConfig['APP']['PRIVATE_KEY_PATH']
 
         with open(private_key_path) as f:
             private_pem = f.read()

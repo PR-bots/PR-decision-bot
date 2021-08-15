@@ -13,9 +13,9 @@ def return_pr_decision(prTrigger: PRTrigger) -> bool:
         url = "https://api.github.com/repos/{owner}/{repo}/issues/{pull_request_number}/comments".format(owner=comment.pr.owner.login, repo=comment.pr.repo.name, pull_request_number=comment.pr.number)
         data = {"body": comment.body}
         response = requests.post(url, data=json.dumps(data), headers=headers)
-        if response.status_code != 200:
+        if response.status_code != 201:
             raise Exception("error with func return_pr_decision: code: %s, message: %s" % (response.status_code, json.loads(response.text)["message"]))
-        print("pause")
+        # update db: pull_requests - last_comment_at, comment_or_not
     except Exception as e:
         print("error with func return_pr_decision: %s" % (repr(e)))
 
