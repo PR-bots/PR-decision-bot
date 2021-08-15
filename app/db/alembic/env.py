@@ -10,9 +10,6 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
 from app.utils.config_loader import ConfigLoader
 
-import pymysql
-pymysql.install_as_MySQLdb() # we are using python3
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -29,7 +26,7 @@ from app.db.tables import sqlalchemy_orm
 target_metadata = sqlalchemy_orm.Base.metadata
 
 env = ConfigLoader().load_env()
-connection_url = "mysql+mysqldb://{user}:{password}@{host}:{port}/{db}".format(user=env["MYSQL"]["USER"], password=env["MYSQL"]["PASSWORD"], host=env["MYSQL"]["HOST"], port=env["MYSQL"]["PORT"], db=env["MYSQL"]["DB"])
+connection_url = "mysql+pymysql://{user}:{password}@{host}:{port}/{db}".format(user=env["MYSQL"]["USER"], password=env["MYSQL"]["PASSWORD"], host=env["MYSQL"]["HOST"], port=env["MYSQL"]["PORT"], db=env["MYSQL"]["DB"])
 config.set_main_option("sqlalchemy.url", connection_url) # we need to add this in main option, because the configuration of sqlalchemy.url is in .env.yaml, not in alembic.ini
 
 # other values from the config, defined by the needs of env.py,

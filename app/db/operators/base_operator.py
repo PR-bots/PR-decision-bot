@@ -10,6 +10,8 @@ class BaseOperator:
 
     def __init__(self) -> None:
         try:
-            self.engine = create_async_engine(ConfigLoader().load_env()["MYSQL"]["MYSQL_CONNECTION"], echo=True)
+            env = ConfigLoader().load_env()
+            url = "mysql+aiomysql://{user}:{password}@{host}:{port}/{db}".format(user=env["MYSQL"]["USER"], password=env["MYSQL"]["PASSWORD"], host=env["MYSQL"]["HOST"], port=env["MYSQL"]["PORT"], db=env["MYSQL"]["DB"])
+            self.engine = create_async_engine(url, echo=True)
         except Exception as e:
             print("error with initialization of BaseOperator: %s" % (repr(e)))

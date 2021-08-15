@@ -17,11 +17,15 @@ class PullRequestOperator(BaseOperator):
         super().__init__()
 
 
+    '''
+    check whether pr exists, if exists then update
+    '''
     async def insert_pull_request(self, pr: PullRequest) -> None:
         def run_queries(session):
             session.execute(insert(tModel.PullRequest).values(
                 owner_login = pr.owner.login,
                 repo_name = pr.repo.name,
+                installation_id = pr.installation.id,
                 number = pr.number,
                 state = pr.state,
                 locked = pr.locked,
@@ -34,6 +38,13 @@ class PullRequestOperator(BaseOperator):
                 await session.commit()
         except Exception as e:
             print("error with func insert_pull_request: %s" % (repr(e)))
+
+
+    async def update_pull_request(self, pr: PullRequest) -> None:
+        try:
+            pass
+        except Exception as e:
+            print("error with func update_pull_request: %s" % (repr(e)))
 
     
     async def query_prs_4_scheduler(self) -> List[PullRequest]:
