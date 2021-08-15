@@ -13,7 +13,7 @@ async def test_insert_pull_requests() -> None:
     await prOp.insert_pull_request(PullRequest(owner=User("zxh2"), repo=Repository("test"), number=1, state="open", locked=1, created_at='2020-01-01 00:00:00'))
 
 @pytest.mark.asyncio
-async def test_query_prs_4_schedular() -> None:
+async def test_query_prs_4_scheduler() -> None:
     prOp = PullRequestOperator()
-    result = await prOp.query_prs_4_schedular()
+    result = await prOp.query_prs_4_scheduler()
     assert len(result) > 0
