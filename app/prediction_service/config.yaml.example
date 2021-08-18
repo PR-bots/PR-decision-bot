@@ -1,0 +1,7 @@
+trainer:
+  mode: "old" # the mode of trainer, old or new/for now, only old mode is supported
+  dataset_url: "https://zenodo.org/record/4837135/files/new_pullreq.csv?download=1" # only need to set when the mode is old
+  dataset_name: "trainer_dataset.csv" # the dataset name you set after downloading
+  model_names:
+    submission: "app/prediction_service/trained_model_submission.sav"
+    process: "app/prediction_service/trained_model_process.sav"
