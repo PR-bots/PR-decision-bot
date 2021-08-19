@@ -1,3 +1,4 @@
+from configparser import ConfigParser
 import re, sys, pathlib, asyncio
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import json5 as json
@@ -9,6 +10,7 @@ from app.prediction_service.trainer import Trainer
 from app.utils.global_variables import GlobalVariable
 from app.services.queries import query_app_id, query_installations
 from app.services.scheduler import Scheduler
+from app.utils.config_loader import ConfigLoader
 
 def application(environ, start_response) -> bytearray:
     start_response('200 OK', [('Content-Type', 'application/json')])
@@ -30,14 +32,17 @@ def application(environ, start_response) -> bytearray:
  
 if __name__ == "__main__":
 
-    # train the prediction model
-    GlobalVariable.trainer = Trainer()
-    # request appId from GitHub
-    GlobalVariable.appId = query_app_id()
+    try: 
+        # train the prediction model
+        GlobalVariable.trainer = Trainer()
+        # request appId from GitHub
+        GlobalVariable.appId = query_app_id()
 
-    s = Scheduler()
+        s = Scheduler()
 
-    port = 4567
-    httpd = make_server("0.0.0.0", port , application)
-    print("serving http on port {0}...".format(str(port)))
-    httpd.serve_forever()
+        service_port = ConfigLoader().load_env()["SERVICE"]["PORT"]
+        httpd = make_server("0.0.0.0", service_port , application)
+        print("serving http on port {0}...".format(str(service_port)))
+        httpd.serve_forever()
+    except Exception as e:
+        print("error with the start of the application in main.py: %s" % (repr(e)))
