@@ -289,7 +289,8 @@ class FactorGetter():
 
 if __name__ == "__main__":
     factorGetter = FactorGetter(
-        pr=PullRequest(owner=User(login="OCA"), repo=Repository(name="l10n-brazil"), number=529),
+        pr=PullRequest(owner=User(login="zhangxunhui"), repo=Repository(name="bot-pullreq-decision"), number=5),
         installation=Installation(id=18836058)
     )
     result = factorGetter.query_pr_infos()
+    print("finish")

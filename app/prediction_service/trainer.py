@@ -12,6 +12,11 @@ import pickle
 import pandas as pd
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegression
+from app.prediction_service.predictor import Predictor
+from app.models.installation import Installation
+from app.models.pull_request import PullRequest
+from app.models.user import User
+from app.models.repository import Repository
 
 class Trainer():
 
@@ -26,14 +31,22 @@ class Trainer():
         For users, they can also split according to the usage of CI tools, etc. Please have a look at the paper.
     '''
     modelSubmissionPath: Optional[str]
+    modelSubmissionFactors: List[str]
     modelSubmission = None
     modelProcessPath: Optional[str]
+    modelProcessFactors: List[str]
     modelProcess = None
 
     def __init__(self) -> None:
         config = ConfigLoader().load_prediction_service_config()
         if "trainer" not in config or "mode" not in config["trainer"]:
             raise Exception("error with the initialization of Trainer object: [trainer]->[mode] not in configuration")
+
+        if "factor_list" not in config["trainer"] or "submission" not in config["trainer"]["factor_list"] or "process" not in config["trainer"]["factor_list"]:
+            raise Exception("error with the initialization of Trainer object: [trainer]->[factor_list]->[submission/process] not in configuration")
+        self.modelSubmissionFactors = config["trainer"]["factor_list"]["submission"]
+        self.modelProcessFactors = config["trainer"]["factor_list"]["process"]
+
         self.mode = config['trainer']['mode']
         if self.mode == "old":
             # choose to use the old mode
@@ -71,12 +84,12 @@ class Trainer():
                 factors: the list of factors for training the model
         '''
         try:
-            df = pd.read_csv(dataPath, nrows=5000)
+            df = pd.read_csv(dataPath, nrows=100000)
             Y = df['merged_or_not']
             X = df[factors]
             X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, Y, test_size=0.1, random_state=10)
             # Fit the model on training set
-            model = LogisticRegression()
+            model = LogisticRegression(max_iter=10000)
             model.fit(X_train, Y_train)
             # Test the model performance
             result = model.score(X_test, Y_test)
@@ -111,12 +124,10 @@ class Trainer():
                 # download dataset
                 self.download_dataset()
                 # train the model
-                factors = ["merged_or_not", "core_member", "num_commits_open", "files_added_open", "prev_pullreqs", "open_pr_num", "account_creation_days", "first_pr", "files_changed_open", "project_age", "stars", "description_length", "followers"] # define the used factors include the response-merged_or_not
-                self.modelSubmission = self._train_one_model(factors=factors, dataPath=self.datasetName, modelPath=self.modelSubmissionPath)
+                self.modelSubmission = self._train_one_model(factors=self.modelSubmissionFactors, dataPath=self.datasetName, modelPath=self.modelSubmissionPath)
             if self.modelProcess is None:
                 self.download_dataset()
-                factors = ["merged_or_not", "lifetime_minutes", "has_comments", "core_member", "num_commits_close", "files_added_close", "prev_pullreqs", "open_pr_num", "account_creation_days", "first_pr", "files_changed_close", "project_age", "reopen_or_not", "stars", "description_length", "followers"]
-                self.modelProcess = self._train_one_model(factors=factors, dataPath=self.datasetName, modelPath=self.modelProcessPath)
+                self.modelProcess = self._train_one_model(factors=self.modelProcessFactors, dataPath=self.datasetName, modelPath=self.modelProcessPath)
                 
 
         except Exception as e:
@@ -125,3 +136,7 @@ class Trainer():
 
 if __name__ == "__main__":
     trainer = Trainer()
+    pr = PullRequest(owner=User(login="zhangxunhui"), repo=Repository(name="bot-pullreq-decision"), number=5)
+    installation = Installation(id=18836058)
+    Predictor(trainer.modelSubmission, trainer.modelProcess, type="submission").predict(pr=pr, installation=installation)
+    print("finish")
