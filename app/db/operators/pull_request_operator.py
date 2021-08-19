@@ -16,6 +16,25 @@ class PullRequestOperator(BaseOperator):
         super().__init__()
 
 
+    async def query_pull_request_id(self, pr: PullRequest) -> int:
+        try:
+            async with self.engine.connect() as connection:
+                result: int = None
+                q = """
+                    select id 
+                    from pull_requests 
+                    where owner_login=:owner_login and repo_name=:repo_name and number=:number;
+                """ 
+                query_result = await connection.execute(text(q), {'owner_login': pr.owner.login, 'repo_name': pr.repo.name, 'number': pr.number})
+                for row in query_result:
+                    result = row["id"]
+                    break
+                return result
+        except Exception as e:
+            print("error with func query_pull_request_id: %s" % (repr(e)))
+            
+
+
     async def insert_pull_request(self, pr: PullRequest, installation: Installation) -> None:
 
         try:
@@ -63,11 +82,40 @@ class PullRequestOperator(BaseOperator):
             print("error with func insert_pull_request: %s" % (repr(e)))
 
 
-    async def update_pull_request(self, pr: PullRequest) -> None:
+    async def update_pull_request_comment(self, pr: PullRequest, last_comment_at, comment_or_not:int, comment_id:int, comment_body:str) -> None:
         try:
-            pass
+            async with self.engine.connect() as connection:
+                q = """
+                    update pull_requests set
+                    last_comment_at=:last_comment_at,
+                    comment_or_not=:comment_or_not
+                    where owner_login=:owner_login and repo_name=:repo_name and number=:number;
+                """
+                await connection.execute(text(q), {
+                    "last_comment_at": last_comment_at,
+                    "comment_or_not": comment_or_not, 
+                    "owner_login": pr.owner.login, 
+                    "repo_name": pr.repo.name, 
+                    "number": pr.number
+                })
+
+                pr_id = await self.query_pull_request_id(pr)
+
+                q = """
+                    insert into comments (
+                        pull_request_id, comment_id, created_at, body
+                    ) values (:pull_request_id, :comment_id, :created_at, :body);
+                """
+                await connection.execute(text(q), {
+                    "pull_request_id": pr_id,
+                    "comment_id": comment_id,
+                    "created_at": last_comment_at,
+                    "body": comment_body
+                })
+
+                await connection.commit()
         except Exception as e:
-            print("error with func update_pull_request: %s" % (repr(e)))
+            print("error with func update_pull_request_comment: %s" % (repr(e)))
 
     
     async def query_prScheduler_4_scheduler(self) -> List[PRScheduler]:
