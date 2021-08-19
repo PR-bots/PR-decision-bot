@@ -2,13 +2,12 @@ import sys, pathlib, asyncio
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
 from app.db.operators.base_operator import BaseOperator
-import app.db.tables.sqlalchemy_orm as tModel
 from app.models.pull_request import PullRequest
 from app.models.scheduler import PRScheduler
 from app.models.user import User
 from app.models.repository import Repository
 from app.models.installation import Installation
-from sqlalchemy import insert, text
+from sqlalchemy import text
 from app.utils.config_loader import ConfigLoader
 from typing import List
 
