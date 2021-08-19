@@ -12,7 +12,6 @@ import pickle
 import pandas as pd
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegression
-from app.prediction_service.predictor import Predictor
 from app.models.installation import Installation
 from app.models.pull_request import PullRequest
 from app.models.user import User
@@ -134,9 +133,9 @@ class Trainer():
             print("error with func train: %s" % (repr(e)))
 
 
-if __name__ == "__main__":
-    trainer = Trainer()
-    pr = PullRequest(owner=User(login="zhangxunhui"), repo=Repository(name="bot-pullreq-decision"), number=5)
-    installation = Installation(id=18836058)
-    Predictor(trainer.modelSubmission, trainer.modelProcess, type="submission").predict(pr=pr, installation=installation)
-    print("finish")
+# if __name__ == "__main__":
+#     trainer = Trainer()
+#     pr = PullRequest(owner=User(login="zhangxunhui"), repo=Repository(name="bot-pullreq-decision"), number=5)
+#     installation = Installation(id=18836058)
+#     Predictor(trainer=trainer, type="submission").predict(pr=pr, installation=installation)
+#     print("finish")

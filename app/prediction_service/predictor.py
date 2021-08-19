@@ -8,6 +8,7 @@ from app.models.pull_request import PullRequest
 from app.models.installation import Installation
 from app.prediction_service.factor_getter import FactorGetter
 from app.utils.config_loader import ConfigLoader
+from app.prediction_service.trainer import Trainer
 
 class Predictor():
 
@@ -15,9 +16,9 @@ class Predictor():
     modelProcess = None
     type: str
 
-    def __init__(self, modelSubmission, modelProcess, type) -> None:
-        self.modelSubmission = modelSubmission
-        self.modelProcess = modelProcess
+    def __init__(self, trainer: Trainer, type: str) -> None:
+        self.modelSubmission = trainer.modelSubmission
+        self.modelProcess = trainer.modelProcess
         self.type = type
 
     def _get_factors(self, pr: PullRequest, installation: Installation) -> Dict:
@@ -33,8 +34,16 @@ class Predictor():
             return s
         except Exception as e:
             print("error with func _factor_cut_suffix: %s" % (repr(e)))
-
+    
     def predict(self, pr: PullRequest, installation: Installation) -> bool:
+        '''
+            predict whether the pull request can be merged
+            params:
+                pr: with owner login, repo name and number
+                installation: which installation is for
+            return:
+                can merge or not: bool
+        '''
         try:
             # get the factors for this pr
             factorDict = self._get_factors(pr, installation)
@@ -43,7 +52,7 @@ class Predictor():
             if self.type == "submission":
                 predictions = self.modelSubmission.predict([X_test])
             elif self.type == "process":
-                predictions = self.modelSubmission.predict([X_test])
+                predictions = self.modelProcess.predict([X_test])
 
             if predictions[0] == 1:
                 return True
