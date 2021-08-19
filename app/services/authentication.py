@@ -3,9 +3,10 @@ import sys, time, pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 import jwt
+from app.utils.global_variables import GlobalVariable
 from app.models.jwt_query import JWTQuery
 from app.models.installation import Installation
-from app.services.queries import query_access_token
+from app.services.queries import query_access_token, query_app_id
 from app.utils.config_loader import ConfigLoader
 
 ALGORITHM = "RS256"
@@ -14,10 +15,9 @@ def getToken(installation: Installation) -> str:
     result: str = None
     try: 
         envConfig = ConfigLoader().load_env()
-        if "APP" not in envConfig or "APP_ID" not in envConfig['APP'] or "PRIVATE_KEY_PATH" not in envConfig['APP']:
+        if "APP" not in envConfig or "PRIVATE_KEY_PATH" not in envConfig['APP']:
             raise Exception("error with configuration .env.yaml")
         
-        appId: int = envConfig['APP']['APP_ID']
         private_key_path: str = envConfig['APP']['PRIVATE_KEY_PATH']
 
         with open(private_key_path) as f:
@@ -26,7 +26,7 @@ def getToken(installation: Installation) -> str:
         payload = {
             "iat": int(time.time()) - 60,
             "exp": int(time.time()) + (10 * 60),
-            "iss": appId
+            "iss": GlobalVariable.appId
         }
         encoded_jwt = jwt.encode(payload, private_pem, algorithm=ALGORITHM)
         
