@@ -133,9 +133,7 @@ class Trainer():
             print("error with func train: %s" % (repr(e)))
 
 
-# if __name__ == "__main__":
-#     trainer = Trainer()
-#     pr = PullRequest(owner=User(login="zhangxunhui"), repo=Repository(name="bot-pullreq-decision"), number=5)
-#     installation = Installation(id=18836058)
-#     Predictor(trainer=trainer, type="submission").predict(pr=pr, installation=installation)
-#     print("finish")
+if __name__ == "__main__":
+    print("training the model...")
+    trainer = Trainer()
+    print("finish")
