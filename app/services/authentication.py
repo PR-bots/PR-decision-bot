@@ -37,7 +37,7 @@ def getToken(installation: Installation) -> str:
         result = query_access_token(jwtQuery)
         
     except Exception as e:
-        print(repr(e))
+        print("error with func getToken: %s" % repr(e))
 
     finally:
         return result
