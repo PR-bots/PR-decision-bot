@@ -8,7 +8,7 @@ echo $App
 function killProcess() {
     NAME=$1
     echo $NAME
-    PID=$(ps -e | grep $NAME | awk '{print $1}')
+    PID=$(ps -ef | grep $NAME | awk '{print $2}')
     echo "PID: $PID"
     kill -9 $PID
 }
