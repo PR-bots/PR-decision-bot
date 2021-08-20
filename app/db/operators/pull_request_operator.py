@@ -131,7 +131,7 @@ class PullRequestOperator(BaseOperator):
                     last_comment_at < TIMESTAMPADD(HOUR, -%s, UTC_TIMESTAMP()))
                     order by last_comment_at asc
                 """ 
-                query_result = await connection.execute(text(q % env["SCHEDULER"]["CYCLE_HOUR"]))
+                query_result = await connection.execute(text(q % env["SERVICE"]["SCHEDULER"]["CYCLE_HOUR"]))
                 for row in query_result:
                     pr = PRScheduler(installation=Installation(id=row['installation_id']), pr=PullRequest(owner=User(login=row['owner_login']), repo=Repository(name=row['repo_name']), number=row['number'], id=row['id']))
                     result.append(pr)
