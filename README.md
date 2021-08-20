@@ -43,7 +43,7 @@ alembic upgrade head
   - change the port ("PORT") of your service.
   - change the number of hours of "REMIND_EVERY_HOURS". This means how often do you want your pull requests receive the remind message.
   - change the number of hours needed for scheduler ("SCHEDULER") to cycle ("CYCLE_MINUTES"). This represents how often does the background scheduler run for 1-round check.
-- start the service using the following commands (for windows server, you need to write your own shell). It will take some time for the training of the model:
+- start the service using the following commands (for windows server, you need to write your own shell). It will take some time for the training of the model. If your server's performance is not good, try running command ```python app/prediction_service/trainer.py``` and train the model at somewhere else before the start of the service.
 ```
 poetry shell
 bash pr-decision-bot.sh start
