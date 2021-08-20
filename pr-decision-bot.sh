@@ -1,5 +1,5 @@
 #!/bin/bash
-AppName = "pr-decision-bot"
+AppName="pr-decision-bot"
 App="~/app/pr-decision-bot.py"
 
 echo $1
@@ -30,10 +30,13 @@ function restart() {
 }
 
 case "$1" in
-    start )
+    start)
         start
-    stop )
+        ;;
+    stop)
         stop
-    restart )
+        ;;
+    restart)
         restart
+        ;;
 esac
