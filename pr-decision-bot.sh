@@ -1,6 +1,6 @@
 #!/bin/bash
 AppName="pr-decision-bot"
-App="~/app/pr-decision-bot.py"
+App="app/pr-decision-bot.py"
 
 echo $1
 echo $App
@@ -15,7 +15,7 @@ function killProcess() {
 
 function start() {
     echo "start $AppName"
-    nohup python -u $App > server.log 2>&1 &
+    nohup python -u $App > $AppName.log 2>&1 &
 }
 
 function stop() {
