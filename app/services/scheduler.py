@@ -15,7 +15,7 @@ class Scheduler():
 
     def __init__(self) -> None:
         self.sched = BackgroundScheduler()
-        self.sched.add_job(self.job_make_decision, 'interval', id='20_seconds_job', seconds=20)
+        self.sched.add_job(self.job_make_decision, 'interval', id='1_hour_job', seconds=60*60)
         self.sched.start()
         print("the schedular is started.")
 
