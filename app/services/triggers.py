@@ -13,6 +13,9 @@ from app.db.operators.pull_request_operator import PullRequestOperator
 from typing import Dict
 
 def parseTriggers(response: Dict) -> Trigger:
+    '''
+    the trigger will also be touched when install the app, we need to handle the exception
+    '''
     try:
         repo = Repository(name=response['repository']['name'])
         owner = User(login=response['repository']['full_name'].split("/")[0])
