@@ -13,10 +13,9 @@ from app.db.operators.pull_request_operator import PullRequestOperator
 from typing import Dict
 
 def parseTriggers(response: Dict) -> Trigger:
-    '''
-    the trigger will also be touched when install the app, we need to handle the exception
-    '''
     try:
+        if 'reponsitory' not in response or "installation" not in response:
+            return None # this is not a right trigger, e.g., the trigger will also be touched when install the app
         repo = Repository(name=response['repository']['name'])
         owner = User(login=response['repository']['full_name'].split("/")[0])
         sender = User(login=response['sender']['login'])

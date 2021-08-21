@@ -24,7 +24,7 @@ def application(environ, start_response) -> bytearray:
     trigger: Trigger = parseTriggers(json_dict)
 
     # only when the trigger is open pull request can return the result
-    if type(trigger) == PRTrigger and trigger.action == "opened":
+    if trigger is not None and type(trigger) == PRTrigger and trigger.action == "opened":
         return_pr_decision(trigger)
 
     return ["success".encode('utf-8')]
