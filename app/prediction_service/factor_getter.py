@@ -87,8 +87,7 @@ class FactorGetter():
                                 login
                             }
                         }
-                        defaultBranchRef{ name }
-                        pullRequests (states: [OPEN]) { totalCount }
+                        pullRequests { totalCount }
                         createdAt
                         stargazerCount
                     }
@@ -104,13 +103,12 @@ class FactorGetter():
             content = response.json()
 
             author_login = content["data"]["repository"]["pullRequest"]["author"]["login"]
-            default_branch = content["data"]["repository"]["defaultBranchRef"]["name"]
             # factors
             lifetime_minutes = int((datetime.datetime.utcnow() - TimeOperator().convertTZTime2TimeStamp(content["data"]["repository"]["pullRequest"]["createdAt"])).total_seconds() / 60)
             has_issue_comments = 1 if content["data"]["repository"]["pullRequest"]["comments"]["totalCount"] > 0 else 0
             has_pr_comments = 1 if content["data"]["repository"]["pullRequest"]["reviews"]["totalCount"] > 0 else 0
             num_commits = content["data"]["repository"]["pullRequest"]["commits"]["totalCount"]
-            open_pr_num = content["data"]["repository"]["pullRequests"]["totalCount"]
+            all_pr_num = content["data"]["repository"]["pullRequests"]["totalCount"]
             files_changed = content["data"]["repository"]["pullRequest"]["changedFiles"]
             project_age = int((datetime.datetime.utcnow() - TimeOperator().convertTZTime2TimeStamp(content["data"]["repository"]["createdAt"])).total_seconds() / 60 / 60 / 24 / 30)
             reopen_or_not = 1 if content["data"]["repository"]["pullRequest"]["timelineItems"]["totalCount"] > 0 else 0
@@ -127,11 +125,10 @@ class FactorGetter():
                     user(login: "%s") {
                         createdAt
                         followers { totalCount }
-                        pullRequests(baseRefName: "%s") { totalCount }
                     }
                 }
             """
-            values = {"query": query % (self.pr.owner.login, self.pr.repo.name, author_login, author_login, default_branch)}
+            values = {"query": query % (self.pr.owner.login, self.pr.repo.name, author_login, author_login)}
             response = requests.post(url=url, headers = headers, json=values)
             response.encoding = 'utf-8'
             if response.status_code != 200:
@@ -140,14 +137,12 @@ class FactorGetter():
 
             account_creation_days = int((datetime.datetime.utcnow() - TimeOperator().convertTZTime2TimeStamp(content["data"]["user"]["createdAt"])).total_seconds() / 60 / 60 / 24)
             core_member = 1 if content["data"]["repository"]["collaborators"] is not None and content["data"]["repository"]["collaborators"]["edges"][0]["permission"] != "READ" else 0
-            prev_pullreqs = content["data"]["user"]["pullRequests"]["totalCount"]
-            first_pr = 1 if prev_pullreqs > 0 else 0
             followers = content["data"]["user"]["followers"]["totalCount"]
 
             # third query has_commit_comments -> has comments
             has_comments = None
-            if has_issue_comments == 0 and has_pr_comments == 0 or True:
-                if num_commits < 100:
+            if has_issue_comments == 0 and has_pr_comments == 0:
+                if num_commits <= 100:
                     query = """
                         query {
                             repository(owner: "%s", name: "%s") {
@@ -216,7 +211,7 @@ class FactorGetter():
 
             # fourth query files_added
             files_added = 0
-            if files_changed < 100:
+            if files_changed <= 100:
                 query = """
                     query {
                         repository(owner: "%s", name: "%s") {
@@ -276,6 +271,81 @@ class FactorGetter():
                     if hasNextPage == False:
                         break
             
+
+            # fifth query all the pull requests for: open_pr_num, prev_pullreqs, first_pr
+            open_pr_num = 0
+            prev_pullreqs = 0
+            if all_pr_num <= 100:
+                query = """
+                    query {
+                        repository(owner: "%s", name: "%s") {
+                            pullRequests(first: 100) {
+                                nodes { author { login } state }
+                            }
+                        }
+                    }
+                """
+                values = {"query": query % (self.pr.owner.login, self.pr.repo.name)}
+                response = requests.post(url=url, headers = headers, json=values)
+                response.encoding = 'utf-8'
+                if response.status_code != 200:
+                    raise Exception("error with func query_pr_infos: code: %s, message: %s" % (response.status_code, json.loads(response.text)["message"]))
+                content = response.json()
+                for prTmp in content["data"]["repository"]["pullRequests"]["nodes"]:
+                    if prTmp["state"] == "OPEN":
+                        open_pr_num += 1
+                    if prTmp["author"]["login"] == author_login:
+                        prev_pullreqs += 1
+                open_pr_num = open_pr_num - 1 if open_pr_num > 0 else open_pr_num
+                prev_pullreqs = prev_pullreqs - 1 if prev_pullreqs > 0 else prev_pullreqs
+                first_pr = 0 if prev_pullreqs > 0 else 1
+            else:
+                page = 0
+                endCursor = None
+                while(True):
+                    page += 1
+                    if page == 1:
+                        query = """
+                            query {
+                                repository(owner: "%s", name: "%s") {
+                                    pullRequests(first: 100) {
+                                        nodes { author { login } state }
+                                        pageInfo { endCursor hasNextPage }
+                                    }
+                                }
+                            }
+                        """
+                        values = {"query": query % (self.pr.owner.login, self.pr.repo.name)}
+                    else:
+                        query = """
+                            query {
+                                repository(owner: "%s", name: "%s") {
+                                    pullRequests(first: 100, after: "%s") {
+                                        nodes { author { login } state }
+                                        pageInfo { endCursor hasNextPage }
+                                    }
+                                }
+                            }
+                        """
+                        values = {"query": query % (self.pr.owner.login, self.pr.repo.name, endCursor)}
+                    response = requests.post(url=url, headers = headers, json=values)
+                    response.encoding = 'utf-8'
+                    if response.status_code != 200:
+                        raise Exception("error with func query_pr_infos: code: %s, message: %s" % (response.status_code, json.loads(response.text)["message"]))
+                    content = response.json()
+
+                    for prTmp in content["data"]["repository"]["pullRequests"]["nodes"]:
+                        if prTmp["state"] == "OPEN":
+                            open_pr_num += 1
+                        if prTmp["author"]["login"] == author_login:
+                            prev_pullreqs += 1
+                    hasNextPage = content["data"]["repository"]["pullRequests"]["pageInfo"]["hasNextPage"]
+                    endCursor = content["data"]["repository"]["pullRequests"]["pageInfo"]["endCursor"]
+                    if hasNextPage == False:
+                        break
+                open_pr_num = open_pr_num - 1 if open_pr_num > 0 else open_pr_num
+                prev_pullreqs = prev_pullreqs - 1 if prev_pullreqs > 0 else prev_pullreqs
+                first_pr = 0 if prev_pullreqs > 0 else 1
 
             # return results
             result = {
