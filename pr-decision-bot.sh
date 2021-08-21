@@ -1,9 +1,8 @@
 #!/bin/bash
-AppName="pr-decision-bot"
+AppName="pr-decision-bot.py"
 App="app/pr-decision-bot.py"
 
 echo $1
-echo $App
 
 function killProcess() {
     NAME=$1
