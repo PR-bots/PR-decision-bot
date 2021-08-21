@@ -14,7 +14,7 @@ from typing import Dict
 
 def parseTriggers(response: Dict) -> Trigger:
     try:
-        if 'reponsitory' not in response or "installation" not in response:
+        if 'repository' not in response or "installation" not in response:
             return None # this is not a right trigger, e.g., the trigger will also be touched when install the app
         repo = Repository(name=response['repository']['name'])
         owner = User(login=response['repository']['full_name'].split("/")[0])

@@ -19,7 +19,7 @@ def return_pr_decision(prTrigger: PRTrigger) -> bool:
 
         # predict the result:
         decision = Predictor(trainer=GlobalVariable.trainer, type="submission").predict(pr=prTrigger.pr, installation=prTrigger.installation)
-        decision_comment = ":+1:This pull request can be merged" if decision else "This pull request cannot be merged"
+        decision_comment = "✔️This pull request can be merged" if decision else "✖️This pull request cannot be merged"
 
         token = getToken(prTrigger.installation)
         comment = PRComment(pr=prTrigger.pr, body=decision_comment)
