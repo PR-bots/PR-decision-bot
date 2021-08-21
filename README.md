@@ -25,6 +25,7 @@ alembic upgrade head
 - create a [new GitHub App](https://github.com/organizations/PR-bots/settings/apps/new) on GitHub web page according to the [instruction](https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app).
   - set the "Webhook URL" to your service url+port
   - set repository permissions as follows:
+    - Contents: Read-only
     - Discussions: Read-only
     - Metadata: Read-only
     - Pull requests: Read & write
