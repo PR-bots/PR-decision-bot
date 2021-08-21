@@ -2,7 +2,7 @@
 import sys, requests, pathlib
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
-import json, time, jwt
+import json, time, jwt, traceback
 
 from typing import Dict, List
 from app.models.installation import Installation
@@ -52,6 +52,7 @@ def query_installations() -> Dict:
                 page += 1
     except Exception as e:
         print("error with func query_installations: %s" % (repr(e)))
+        print(traceback.format_exc())
     finally:
         return result
 
@@ -66,6 +67,7 @@ def query_access_token(query: JWTQuery) -> str:
         result = response.json()["token"]
     except Exception as e:
         print("error with func query_access_token: %s" % (repr(e)))
+        print(traceback.format_exc())
     finally:
         return result
 
@@ -84,3 +86,4 @@ def query_app_id() -> int:
         return result
     except Exception as e:
         print("error with func query_app_id: %s" % (repr(e)))
+        print(traceback.format_exc())

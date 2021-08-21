@@ -1,12 +1,12 @@
 # this is the authentication service
-import sys, time, pathlib
+import sys, time, pathlib, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 import jwt
 from app.utils.global_variables import GlobalVariable
 from app.models.jwt_query import JWTQuery
 from app.models.installation import Installation
-from app.services.queries import query_access_token, query_app_id
+from app.services.queries import query_access_token
 from app.utils.config_loader import ConfigLoader
 
 ALGORITHM = "RS256"
@@ -38,6 +38,7 @@ def getToken(installation: Installation) -> str:
         
     except Exception as e:
         print("error with func getToken: %s" % repr(e))
+        print(traceback.format_exc())
 
     finally:
         return result

@@ -1,5 +1,5 @@
 # used to get all factors for prediction
-import sys, pathlib, requests, json, datetime
+import sys, pathlib, requests, json, datetime, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 from app.models.pull_request import PullRequest
 from app.models.installation import Installation
@@ -35,6 +35,7 @@ class FactorGetter():
             return int((datetime.datetime.utcnow() - self.pr.created_at).total_seconds() / 60.0)
         except Exception as e:
             print("error with func lifetime_minutes: %s" % (repr(e)))
+            print(traceback.format_exc())
 
     def has_comments(self):
         try:
@@ -48,6 +49,7 @@ class FactorGetter():
             print("pause")
         except Exception as e:
             print("error with func has_comments: %s" % (repr(e)))
+            print(traceback.format_exc())
 
     def query_pr_infos(self):
         try:
@@ -356,6 +358,7 @@ class FactorGetter():
 
         except Exception as e:
             print("error with func query_pr_infos: %s" % (repr(e)))
+            print(traceback.format_exc())
 
 if __name__ == "__main__":
     factorGetter = FactorGetter(

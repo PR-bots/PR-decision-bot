@@ -1,5 +1,5 @@
 from typing import List
-import re
+import re, traceback
 
 
 class WordCounter():
@@ -14,3 +14,4 @@ class WordCounter():
             return result
         except Exception as e:
             print("error with func count: %s" % (repr(e)))
+            print(traceback.format_exc())

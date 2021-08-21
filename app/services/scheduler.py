@@ -1,5 +1,4 @@
-from app.models.jwt_query import JWTQuery
-import sys, pathlib, asyncio, os
+import sys, pathlib, asyncio, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.db.operators.pull_request_operator import PullRequestOperator
@@ -22,6 +21,7 @@ class Scheduler():
             print("the schedular is started.")
         except Exception as e:
             print("error with the initialization of Scheduler: %s" % (repr(e)))
+            print(traceback.format_exc())
 
     def job_make_decision(self) -> None:
         try:
@@ -38,3 +38,4 @@ class Scheduler():
                 asyncio.run(return_pr_decision_schedular(PRSchedulerTrigger(installation=installationDict[task.pr.owner.login], pr=task.pr)))
         except Exception as e:
             print("error with func job_make_decision: %s" % (repr(e)))
+            print(traceback.format_exc())

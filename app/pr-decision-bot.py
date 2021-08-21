@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-import re, sys, pathlib, asyncio
+import re, sys, pathlib, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import json5 as json
 from app.services.comments import return_pr_decision
@@ -46,3 +46,4 @@ if __name__ == "__main__":
         httpd.serve_forever()
     except Exception as e:
         print("error with the start of the application in main.py: %s" % (repr(e)))
+        print(traceback.format_exc())

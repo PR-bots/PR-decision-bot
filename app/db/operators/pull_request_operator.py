@@ -1,4 +1,4 @@
-import sys, pathlib, asyncio
+import sys, pathlib, asyncio, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
 from app.db.operators.base_operator import BaseOperator
@@ -32,6 +32,7 @@ class PullRequestOperator(BaseOperator):
                 return result
         except Exception as e:
             print("error with func query_pull_request_id: %s" % (repr(e)))
+            print(traceback.format_exc())
             
 
 
@@ -80,6 +81,7 @@ class PullRequestOperator(BaseOperator):
                 await connection.commit()
         except Exception as e:
             print("error with func insert_pull_request: %s" % (repr(e)))
+            print(traceback.format_exc())
 
 
     async def update_pull_request_comment(self, pr: PullRequest, last_comment_at, comment_or_not:int, comment_id:int, comment_body:str) -> None:
@@ -116,6 +118,7 @@ class PullRequestOperator(BaseOperator):
                 await connection.commit()
         except Exception as e:
             print("error with func update_pull_request_comment: %s" % (repr(e)))
+            print(traceback.format_exc())
 
     
     async def query_prScheduler_4_scheduler(self) -> List[PRScheduler]:
@@ -138,6 +141,7 @@ class PullRequestOperator(BaseOperator):
                 return result
         except Exception as e:
             print("error with func query_prScheduler_4_scheduler: %s" % (repr(e)))
+            print(traceback.format_exc())
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import sys, pathlib
+import sys, pathlib, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from typing import Optional
@@ -15,3 +15,4 @@ class BaseOperator:
             self.engine = create_async_engine(url, echo=True)
         except Exception as e:
             print("error with initialization of BaseOperator: %s" % (repr(e)))
+            print(traceback.format_exc())

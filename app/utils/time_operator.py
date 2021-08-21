@@ -1,4 +1,4 @@
-import datetime
+import datetime, traceback
 
 class TimeOperator():
 
@@ -9,5 +9,6 @@ class TimeOperator():
             result = datetime.datetime.strptime(utc, UTC_FORMAT)
         except Exception as e:
             print('error with func convertTZTime2TimeStamp: %s' % (repr(e)))
+            print(traceback.format_exc())
         finally:
             return result

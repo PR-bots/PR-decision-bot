@@ -1,6 +1,5 @@
 # handle triggers
-from gettext import install
-import sys, pathlib, asyncio
+import sys, pathlib, asyncio, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 from app.models.trigger import *
@@ -16,6 +15,8 @@ def parseTriggers(response: Dict) -> Trigger:
     try:
         if 'repository' not in response or "installation" not in response:
             return None # this is not a right trigger, e.g., the trigger will also be touched when install the app
+        # check whether the permissions have been admitted by the installation
+
         repo = Repository(name=response['repository']['name'])
         owner = User(login=response['repository']['full_name'].split("/")[0])
         sender = User(login=response['sender']['login'])
@@ -37,3 +38,4 @@ def parseTriggers(response: Dict) -> Trigger:
             return prTrigger
     except Exception as e:
         print("error with func parseTriggers: %s" % (repr(e)))
+        print(traceback.format_exc())

@@ -1,5 +1,5 @@
 from typing import Dict
-import yaml, sys, pathlib
+import yaml, sys, pathlib, traceback
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
 class ConfigLoader():
@@ -11,6 +11,7 @@ class ConfigLoader():
                 result = yaml.load(f, Loader=yaml.FullLoader)
         except Exception as e:
             print("error with func load_env: %s" % (repr(e)))
+            print(traceback.format_exc())
         finally:
             return result
 
@@ -21,5 +22,6 @@ class ConfigLoader():
                 result = yaml.load(f, Loader=yaml.FullLoader)
         except Exception as e:
             print("error with func load_prediction_service_config: %s" % (repr(e)))
+            print(traceback.format_exc())
         finally:
             return result

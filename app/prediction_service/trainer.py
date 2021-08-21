@@ -8,14 +8,10 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 from typing import Optional, List
 from app.utils.config_loader import ConfigLoader
 # for training the model
-import pickle
+import pickle, traceback
 import pandas as pd
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegression
-from app.models.installation import Installation
-from app.models.pull_request import PullRequest
-from app.models.user import User
-from app.models.repository import Repository
 
 class Trainer():
 
@@ -99,6 +95,7 @@ class Trainer():
             return model
         except Exception as e:
             print("error with func _train_one_model: %s" % (repr(e)))
+            print(traceback.format_exc())
 
 
     def train(self):
@@ -131,6 +128,7 @@ class Trainer():
 
         except Exception as e:
             print("error with func train: %s" % (repr(e)))
+            print(traceback.format_exc())
 
 
 if __name__ == "__main__":

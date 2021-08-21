@@ -1,6 +1,6 @@
 # predict using the trained model
 
-import sys, pathlib
+import sys, pathlib, traceback
 from typing import List, Dict
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2]))
 
@@ -34,6 +34,7 @@ class Predictor():
             return s
         except Exception as e:
             print("error with func _factor_cut_suffix: %s" % (repr(e)))
+            print(traceback.format_exc())
     
     def predict(self, pr: PullRequest, installation: Installation) -> bool:
         '''
@@ -56,7 +57,10 @@ class Predictor():
 
             if predictions[0] == 1:
                 return True
-            else:
+            elif predictions[0] == 0:
                 return False
+            else:
+                raise Exception("error with the prediction result of func predict.")
         except Exception as e:
             print("error with func predict: %s" % (repr(e)))
+            print(traceback.format_exc())
